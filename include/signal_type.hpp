@@ -1,0 +1,1 @@
+enum Signal {_RIGHT, _LEFT, _NONE};

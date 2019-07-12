@@ -174,3 +174,4 @@ $RECYCLE.BIN/
 
 # excluding build folder
 build/
+test/
