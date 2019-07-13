@@ -28,14 +28,22 @@
 
 class Recording {
     public:
-        Recording(std::string serial);
+        Recording(std::string serial, std::string new_list_channels);
         ~Recording();
 
         void getData();
         void recordData();
         void setRecording(bool value);
+        void setLSLSharing(bool value);
+        void setupLSLSharing(bool value);
 
-    private:
+        lsl::stream_info *info_ET;
+        lsl::stream_outlet *outlet_ET;
+
+      private:
+        void settingConfig(std::string new_list_channels);
+        Signal resolveSignal(std::string input);
+    
         TobiiResearchEyeTrackers *eyetrackers;
 		TobiiResearchEyeTracker *eyetracker;
 
@@ -46,6 +54,14 @@ class Recording {
         char *device_name;
 
         bool recording;
+        bool lsl_sharing;
+        bool sig_LEFT;
+        bool sig_RIGHT;
+
+        int nb_channels;
+
+        std::vector<std::string> list_channels;
+        std::vector<std::vector<float>> chanels_ET;
 };
 
 #endif

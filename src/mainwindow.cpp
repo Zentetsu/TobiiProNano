@@ -36,6 +36,8 @@ void MainWindow::loadChanlocsDialog() {
 void MainWindow::connectLabrecorder() {
     if (!stop_labrecorder) {
         try {
+            record->setLSLSharing(false);
+            record->setupLSLSharing(false);
             stop_labrecorder = true;
         } catch(std::exception &e) {
             QMessageBox::critical(this,"Error",(std::string("Could not stop the background processing: ")+=e.what()).c_str(),QMessageBox::Ok);
@@ -46,6 +48,8 @@ void MainWindow::connectLabrecorder() {
         ui->connect_labrecorder->setText("Link");
     } else if(!stop_ET) {
         stop_labrecorder = false;
+        record->setupLSLSharing(true);
+        record->setLSLSharing(true);
 
         ui->connect_labrecorder->setText("Unlink");
     } else {
@@ -74,7 +78,7 @@ void MainWindow::connectET() {
         ui->connect_ET->setText("Connect");
     } else if(stop_ET) {
         try {
-            record = new Recording(ui->ET_serial->text().toStdString());
+            record = new Recording(ui->ET_serial->text().toStdString(), ui->reference_channels->text().toStdString());
             record->getData();
         } catch(std::exception &e) {
             QMessageBox::critical(this,"Error", (std::string("Unable to start connection with the ET") += e.what()).c_str(), QMessageBox::Ok);

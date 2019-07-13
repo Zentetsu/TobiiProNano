@@ -5,7 +5,7 @@ static void gaze_data_callback(TobiiResearchGazeData* gaze_data, void* user_data
     memcpy(user_data, gaze_data, sizeof(*gaze_data));
 }
 
-Recording::Recording(std::string serial) {
+Recording::Recording(std::string serial, std::string new_list_channels) {
     recording = false;
 
     eyetrackers = NULL;
@@ -37,6 +37,8 @@ Recording::Recording(std::string serial) {
 
         std::cout << "INFO: " << address << '\t' << serial_number << '\t' << std::endl;
     }
+
+    settingConfig(new_list_channels);
 }
 
 Recording::~Recording() {
@@ -59,13 +61,81 @@ void Recording::recordData() {
     
     while(recording) {
         std::cout << "LEFT: x=" << gaze_data.left_eye.gaze_point.position_on_display_area.x << ", y=" << gaze_data.left_eye.gaze_point.position_on_display_area.y << "; RIGHT: x=" << gaze_data.right_eye.gaze_point.position_on_display_area.x << ", y=" << gaze_data.right_eye.gaze_point.position_on_display_area.y << std::endl;
-        // printf("Right eye 3d gaze origin in user coordinates (%f, %f, %f)\n",
-        //         gaze_data.right_eye.gaze_origin.position_in_user_coordinates.x,
-        //         gaze_data.right_eye.gaze_origin.position_in_user_coordinates.y,
-        //         gaze_data.right_eye.gaze_origin.position_in_user_coordinates.z);
+
+        chanels_ET.resize(1);
+
+        for(int i = 0; i < 1; i++) {
+            chanels_ET[i].resize(nb_channels);
+            chanels_ET[i][0] = gaze_data.left_eye.gaze_point.position_on_display_area.x;
+
+            if(sig_LEFT && !sig_RIGHT) {
+                chanels_ET[i][0] = gaze_data.left_eye.gaze_point.position_on_display_area.x;
+                chanels_ET[i][1] = gaze_data.left_eye.gaze_point.position_on_display_area.y;
+            } else if(!sig_LEFT && sig_RIGHT) {
+                chanels_ET[i][0] = gaze_data.right_eye.gaze_point.position_on_display_area.x;
+                chanels_ET[i][1] = gaze_data.right_eye.gaze_point.position_on_display_area.y;
+            } else {
+                chanels_ET[i][0] = gaze_data.left_eye.gaze_point.position_on_display_area.x;
+                chanels_ET[i][1] = gaze_data.left_eye.gaze_point.position_on_display_area.y;
+                chanels_ET[i][2] = gaze_data.right_eye.gaze_point.position_on_display_area.x;
+                chanels_ET[i][3] = gaze_data.right_eye.gaze_point.position_on_display_area.y;
+            }
+        }
+
+        if(lsl_sharing)
+            outlet_ET->push_chunk(chanels_ET);
     }
 }
 
 void Recording::setRecording(bool value) {
     recording = value;
+}
+
+void Recording::setLSLSharing(bool value) {
+    lsl_sharing = value;
+}
+
+
+void Recording::setupLSLSharing(bool value) {
+    if(value)
+        outlet_ET = new lsl::stream_outlet(*info_ET);
+    else
+       delete outlet_ET;
+}
+
+void Recording::settingConfig(std::string new_list_channels) {
+    boost::algorithm::split(list_channels, new_list_channels, boost::algorithm::is_any_of(", "), boost::algorithm::token_compress_on);
+
+    sig_LEFT = false;
+    sig_RIGHT = false;
+    nb_channels = 0;
+
+    for (auto it : list_channels) {
+        switch(resolveSignal(it)) {
+            case _LEFT:
+                nb_channels += 2;
+                sig_LEFT = true;
+                
+                break;
+            case _RIGHT:
+                nb_channels += 2;
+                sig_RIGHT = true;
+                
+                break;
+            case _NONE:
+                std::cout << "ERROR" << std::endl;
+                
+                break;
+        }
+    }
+    
+    info_ET = new lsl::stream_info(serial_number, "Eye_tracker", nb_channels, 2000, lsl::cf_float32, boost::asio::ip::host_name());
+    //TODO: change frequency 
+}
+
+Signal Recording::resolveSignal(std::string input) {
+    if(input == "LEFT") return _LEFT;
+    if(input == "RIGHT") return _RIGHT;
+    
+    return _NONE;
 }
