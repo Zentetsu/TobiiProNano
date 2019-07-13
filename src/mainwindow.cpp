@@ -71,7 +71,7 @@ void MainWindow::connectET() {
         ui->connect_ET->setText("Connect");
     } else if(stop_ET) {
         try {
-            record = new Recording();
+            record = new Recording(ui->ET_design->text().toStdString());
         } catch(std::exception &e) {
             QMessageBox::critical(this,"Error", (std::string("Unable to start connection with the ET") += e.what()).c_str(), QMessageBox::Ok);
 

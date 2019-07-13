@@ -38,20 +38,15 @@
                         <item row="3" column="0">
                             <widget class="QLabel" name="label_2">
                                 <property name="text">
-                                    <string>Eye_tracker design</string>
+                                    <string>Tracker reference</string>
                                 </property>
                             </widget>
                         </item>
                         <item row="3" column="1">
-                            <widget class="QComboBox" name="ET_design">
-                                <property name="editable">
-                                    <bool>true</bool>
+                            <widget class="QLineEdit" name="ET_serial">
+                                <property name="text">
+                                    <string>TPNA</string>
                                 </property>
-                                <item>
-                                    <property name="text">
-                                        <string>Tobii Pro Nano</string>
-                                    </property>
-                                </item>
                             </widget>
                         </item>
                     </layout>

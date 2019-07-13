@@ -28,7 +28,7 @@
 
 class Recording {
     public:
-        Recording();
+        Recording(std::string serial);
         ~Recording();
 
     private:
