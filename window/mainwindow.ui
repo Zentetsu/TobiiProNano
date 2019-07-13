@@ -45,7 +45,7 @@
                         <item row="3" column="1">
                             <widget class="QLineEdit" name="ET_serial">
                                 <property name="text">
-                                    <string>TPNA</string>
+                                    <string>TPNA1-030108547805</string>
                                 </property>
                             </widget>
                         </item>

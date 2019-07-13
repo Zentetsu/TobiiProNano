@@ -31,9 +31,21 @@ class Recording {
         Recording(std::string serial);
         ~Recording();
 
+        void getData();
+        void recordData();
+        void setRecording(bool value);
+
     private:
         TobiiResearchEyeTrackers *eyetrackers;
 		TobiiResearchEyeTracker *eyetracker;
+
+        TobiiResearchGazeData gaze_data;
+
+        char *address;
+        char *serial_number;
+        char *device_name;
+
+        bool recording;
 };
 
 #endif

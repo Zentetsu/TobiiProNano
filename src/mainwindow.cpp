@@ -57,6 +57,9 @@ void MainWindow::connectET() {
     if (!stop_ET && stop_labrecorder) {
         try {
             stop_ET = true;
+            
+            record->setRecording(false);
+
             ET_thread->interrupt();
             ET_thread->join();
             ET_thread.reset();
@@ -71,7 +74,8 @@ void MainWindow::connectET() {
         ui->connect_ET->setText("Connect");
     } else if(stop_ET) {
         try {
-            record = new Recording(ui->ET_design->text().toStdString());
+            record = new Recording(ui->ET_serial->text().toStdString());
+            record->getData();
         } catch(std::exception &e) {
             QMessageBox::critical(this,"Error", (std::string("Unable to start connection with the ET") += e.what()).c_str(), QMessageBox::Ok);
 
@@ -103,5 +107,5 @@ void MainWindow::saveConfig(const std::string filename) {
 }
 
 void MainWindow::acquisitionET() {
-
+    record->recordData();
 }
