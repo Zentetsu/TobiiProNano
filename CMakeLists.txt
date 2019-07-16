@@ -8,7 +8,14 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED On)
 
 set(TOBII_INCL_DIR "/usr/local/include/tobii_research")
-find_library(TOBII_LIB "/usr/local/lib/tobii_research/libtobii_research.dylib")
+
+if(WIN32)
+	find_library(TOBII_LIB ${PROJECT_NAME}/LIB/64/lib/libtobii_research.lib)
+elseif(APPLE)
+	find_library(TOBII_LIB "/usr/local/lib/tobii_research/libtobii_research.dylib")
+else()
+	find_library(TOBII_LIB "/usr/local/lib/tobii_research/libtobii_research.so")
+endif()
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets)
 

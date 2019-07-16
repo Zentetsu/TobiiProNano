@@ -38,6 +38,8 @@ Recording::Recording(std::string serial, std::string new_list_channels) {
         std::cout << "INFO: " << address << '\t' << serial_number << '\t' << std::endl;
     }
 
+    TobiiResearchStatus status = tobii_research_get_gaze_output_frequency(eyetracker, &initial_gaze_output_frequency);
+
     settingConfig(new_list_channels);
 }
 
@@ -129,8 +131,8 @@ void Recording::settingConfig(std::string new_list_channels) {
         }
     }
     
-    info_ET = new lsl::stream_info(serial_number, "Eye_tracker", nb_channels, 2000, lsl::cf_float32, boost::asio::ip::host_name());
-    //TODO: change frequency 
+    std::cout << "freq: " << initial_gaze_output_frequency << std::endl;
+    info_ET = new lsl::stream_info(serial_number, "Eye_tracker", nb_channels, initial_gaze_output_frequency, lsl::cf_float32, boost::asio::ip::host_name());
 }
 
 Signal Recording::resolveSignal(std::string input) {

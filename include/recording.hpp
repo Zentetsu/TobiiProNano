@@ -60,6 +60,8 @@ class Recording {
 
         int nb_channels;
 
+        float initial_gaze_output_frequency;
+
         std::vector<std::string> list_channels;
         std::vector<std::vector<float>> chanels_ET;
 };
