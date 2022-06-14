@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(TobiiProNano LANGUAGES CXX VERSION 1.0.0)
+project(TobiiProNano LANGUAGES C CXX VERSION 1.0.0)
 
 include(Findliblsl.cmake)
 
@@ -12,12 +12,12 @@ set(TOBII_INCL_DIR "/usr/local/include/tobii_research")
 if(WIN32)
 	find_library(TOBII_LIB ${PROJECT_NAME}/LIB/64/lib/libtobii_research.lib)
 elseif(APPLE)
-	find_library(TOBII_LIB "/usr/local/lib/tobii_research/libtobii_research.dylib")
+	find_library(TOBII_LIB "/usr/local/lib/tobii_research/libtobii_research.1.10.1.dylib")
 else()
-	find_library(TOBII_LIB "/usr/local/lib/tobii_research/libtobii_research.so")
+	find_library(TOBII_LIB "/usr/local/lib/tobii_research/libtobii_research.1.10.1.so")
 endif()
 
-find_package(Qt5 REQUIRED COMPONENTS Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
 
 if(WIN32)
 	SET(Boost_USE_STATIC_LIBS OFF)
@@ -53,7 +53,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${TOBII_INCL_DIR})
 if(WIN32)
 	target_link_libraries(${PROJECT_NAME}
 		PRIVATE
-		Qt5::Widgets
+		Qt6::Widgets
 		LSL::lsl
 		ws2_32
 		${USED_LIBS}
@@ -62,7 +62,7 @@ if(WIN32)
 else()
 	target_link_libraries(${PROJECT_NAME}
 		PRIVATE
-		Qt5::Widgets
+		Qt6::Widgets
 		LSL::lsl
 		Boost::thread
 		${TOBII_LIB}
